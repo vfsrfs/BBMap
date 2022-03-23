@@ -10,9 +10,9 @@
 using namespace llvm;
 
 namespace {
-  struct BBmapPass : public FunctionPass {
+  struct BBMapPass : public FunctionPass {
     static char ID;
-    BBmapPass() : FunctionPass(ID) {}
+    BBMapPass() : FunctionPass(ID) {}
 
     virtual bool runOnFunction(Function &F) {
       for (auto& bb: F) {
@@ -32,23 +32,23 @@ namespace {
   };
 }
 
-char BBmapPass::ID = 0;
+char BBMapPass::ID = 0;
 
-static RegisterPass<BBmapPass> X("bbmap", "Map Basic Blocks to Filename and Line Number",
+static RegisterPass<BBMapPass> X("bbmap", "Map Basic Blocks to Filename and Line Number",
                              false /* Only looks at CFG */,
                              false /* Analysis Pass */);
 
 static RegisterStandardPasses Y(
     PassManagerBuilder::EP_EarlyAsPossible,
     [](const PassManagerBuilder &Builder,
-       legacy::PassManagerBase &PM) { PM.add(new BBmapPass()); });
+       legacy::PassManagerBase &PM) { PM.add(new BBMapPass()); });
 
 
 // Automatically enable the pass.
 // http://adriansampson.net/blog/clangpass.html
-//static void registerBBmapPass(const PassManagerBuilder &, legacy::PassManagerBase &PM) {
-//  PM.add(new BBmapPass());
+//static void registerBBMapPass(const PassManagerBuilder &, legacy::PassManagerBase &PM) {
+//  PM.add(new BBMapPass());
 //}
 //static RegisterStandardPasses
 //  RegisterMyPass(PassManagerBuilder::EP_EarlyAsPossible,
-//                 registerBBmapPass);
+//                 registerBBMapPass);
