@@ -9,6 +9,14 @@
 
 using namespace llvm;
 
+int getLineNumber(const Instruction &inst) {
+  if (!inst.hasMetadata()) {
+    return -1;
+  }
+  return inst.getDebugLoc().getLine();
+}
+
+
 namespace {
   struct BBMapPass : public FunctionPass {
     static char ID;
@@ -16,51 +24,25 @@ namespace {
 
     virtual bool runOnFunction(Function &F) {
       for (auto& bb: F) {
-        //Instruction* begin = &(*(bb.begin()));
-        //Instruction* end = &(*(bb.end()));
-        DebugLoc debugInfo_begin;
-        DebugLoc debugInfo_end;
-/*
-        for (auto& inst: bb){
-          debugInfo_begin = (*inst).getDebugLoc();
-          if (debugInfo_begin) {
-                  break;
+        std::string locs = "";
+        for (auto &inst : bb) {
+          if (inst.hasMetadata()) {
+            if (locs.size() == 0) {
+              locs.append(inst.getDebugLoc().getDirectory());
+              locs.append("/");
+              locs.append(inst.getDebugLoc().getFilename());
+              locs.append(":")
+            }
+            int line = inst.getDebugLoc().getLine();
+            locs.append(std::to_string(line));
+            locs.append(";");
+
           }
         }
-*/
 
-        for (llvm::BasicBlock::iterator it = bb.begin(); it != bb.end(); ++it) {
-         debugInfo_begin = (*it).getDebugLoc();
-         if (debugInfo_begin) {
-                break;
-         }
-        }
-
-
-        for (llvm::BasicBlock::reverse_iterator it = bb.rbegin(); it != bb.rend(); ++it) {
-         debugInfo_end = (*it).getDebugLoc();
-         if (debugInfo_end) {
-                 break;
-         }
-        }
-
-
-
-        //const DebugLoc &debugInfo_begin = begin->getDebugLoc();
-        //const DebugLoc &debugInfo_end = end->getDebugLoc();
-        if (debugInfo_begin && debugInfo_end){
-          std::string directory = debugInfo_begin->getDirectory();
-          std::string filePath = debugInfo_begin->getFilename();
-          int line_begin = debugInfo_begin->getLine();
-          int line_end = debugInfo_end->getLine();
-          //errs() << "\n LAST: "<<*current<< directory << " " << filePath << " " << line  << "\n";
-          errs() << directory << "/" << filePath << ":" << line_begin << "-" << line_end << "\n";
-        }
-        else {
-          errs() << "NO Debug Info\n";
-        }
+        errs() << locs << "\n";
+        locs = "";
       }
-      //errs() << "I saw a function called " << F.getName() << "!\n";
       return false;
     }
   };
