@@ -16,8 +16,8 @@ namespace {
 
     virtual bool runOnFunction(Function &F) {
       for (auto& bb: F) {
-        Instruction* begin = bb->iterator.begin();
-      	Instruction* end = bb->iterator.end();
+        Instruction* begin = bb.iterator.begin();
+      	Instruction* end = bb.iterator.end();
         const DebugLoc &debugInfo_begin = begin->getDebugLoc();
       	const DebugLoc &debugInfo_end = end->getDebugLoc();
         if (debugInfo_begin && debugInfo_end){
