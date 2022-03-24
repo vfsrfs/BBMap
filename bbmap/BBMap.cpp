@@ -16,18 +16,18 @@ namespace {
 
     virtual bool runOnFunction(Function &F) {
       for (auto& bb: F) {
-  Instruction* begin = bb.getFirstNonPHI();
-	Instruction* end = bb.getTerminator();
-  const DebugLoc &debugInfo_begin = begin->getDebugLoc();
-	const DebugLoc &debugInfo_end = end->getDebugLoc();
-	if (debugInfo_begin && debugInfo_end){
-	std::string directory = debugInfo_begin->getDirectory();
-	std::string filePath = debugInfo_begin->getFilename();
-	int line_begin = debugInfo_begin->getLine();
-  int line_end = debugInfo_end->getLine();
-	//errs() << "\n LAST: "<<*current<< directory << " " << filePath << " " << line  << "\n";
-  errs() << directory << "/" << filePath << ":" << line_begin << "-" << line_end << "\n";
-	}
+        Instruction* begin = bb->iterator.begin();
+      	Instruction* end = bb->iterator.end();
+        const DebugLoc &debugInfo_begin = begin->getDebugLoc();
+      	const DebugLoc &debugInfo_end = end->getDebugLoc();
+        if (debugInfo_begin && debugInfo_end){
+          std::string directory = debugInfo_begin->getDirectory();
+          std::string filePath = debugInfo_begin->getFilename();
+          int line_begin = debugInfo_begin->getLine();
+          int line_end = debugInfo_end->getLine();
+          //errs() << "\n LAST: "<<*current<< directory << " " << filePath << " " << line  << "\n";
+          errs() << directory << "/" << filePath << ":" << line_begin << "-" << line_end << "\n";
+        }
       }
       //errs() << "I saw a function called " << F.getName() << "!\n";
       return false;
