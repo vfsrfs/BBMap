@@ -28,10 +28,10 @@ namespace {
         for (auto &inst : bb) {
           if (inst.hasMetadata()) {
             if (locs.size() == 0) {
-              locs.append(inst.getDebugLoc().getDirectory());
+              locs.append(inst.getDebugLoc()->getDirectory());
               locs.append("/");
-              locs.append(inst.getDebugLoc().getFilename());
-              locs.append(":")
+              locs.append(inst.getDebugLoc()->getFilename());
+              locs.append(":");
             }
             int line = inst.getDebugLoc().getLine();
             locs.append(std::to_string(line));
