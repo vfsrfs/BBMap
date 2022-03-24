@@ -16,10 +16,38 @@ namespace {
 
     virtual bool runOnFunction(Function &F) {
       for (auto& bb: F) {
-        Instruction* begin = &(*(bb.begin()));
-      	Instruction* end = &(*(bb.end()));
-        const DebugLoc &debugInfo_begin = begin->getDebugLoc();
-      	const DebugLoc &debugInfo_end = end->getDebugLoc();
+        //Instruction* begin = &(*(bb.begin()));
+        //Instruction* end = &(*(bb.end()));
+        DebugLoc debugInfo_begin;
+        DebugLoc debugInfo_end;
+/*
+        for (auto& inst: bb){
+          debugInfo_begin = (*inst).getDebugLoc();
+          if (debugInfo_begin) {
+                  break;
+          }
+        }
+*/
+
+        for (llvm::BasicBlock::iterator it = bb.begin(); it != bb.end(); ++it) {
+         debugInfo_begin = (*it).getDebugLoc();
+         if (debugInfo_begin) {
+                break;
+         }
+        }
+
+
+        for (llvm::BasicBlock::reverse_iterator it = bb.rbegin(); it != bb.rend(); ++it) {
+         debugInfo_end = (*it).getDebugLoc();
+         if (debugInfo_end) {
+                 break;
+         }
+        }
+
+
+
+        //const DebugLoc &debugInfo_begin = begin->getDebugLoc();
+        //const DebugLoc &debugInfo_end = end->getDebugLoc();
         if (debugInfo_begin && debugInfo_end){
           std::string directory = debugInfo_begin->getDirectory();
           std::string filePath = debugInfo_begin->getFilename();
@@ -27,6 +55,9 @@ namespace {
           int line_end = debugInfo_end->getLine();
           //errs() << "\n LAST: "<<*current<< directory << " " << filePath << " " << line  << "\n";
           errs() << directory << "/" << filePath << ":" << line_begin << "-" << line_end << "\n";
+        }
+        else {
+          errs() << "NO Debug Info\n";
         }
       }
       //errs() << "I saw a function called " << F.getName() << "!\n";
